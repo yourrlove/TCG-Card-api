@@ -31,7 +31,15 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //init mysql db
-const { sequelize } = require('./databases/init.mysql')
+const { sequelize } = require('./models/index');
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 
 
