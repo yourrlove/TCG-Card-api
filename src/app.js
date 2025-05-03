@@ -1,41 +1,63 @@
-const createError = require('http-errors');
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors');
+const compression = require('compression');
 
+
+// Routers
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+// Middlewares
+// const corsOptions = require('./configs/CORS/corsOptions');
+// const credentials = require('./middlewares/credentials');
 
 const app = express();
+ 
+// Handle options credentials check - before CORS!
+// and fetch cookies credentials requirement
+// app.use(credentials);
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+
+// Cross Origin Resource Sharing
+// app.use(cors(corsOptions));
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//init mysql db
+const { sequelize } = require('./databases/init.mysql')
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+
+
+app.use('/v1', indexRouter);
+
+/* GET home page. */
+app.get('/', function(req, res, next) {
+  res.json({
+    "msg": "Hello World",
+  });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// handling errors
+app.use((req, res, next) => {
+    const error = new Error('Not Found');
+    error.status = 404;
+    next(error);
+});
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.use((error, req, res, next) => {
+    const statusCode = error.status || 500
+    return res.status(statusCode).json({
+        status: 'error',
+        code: statusCode,
+        message: error.message || 'Internal Server Error'
+    })
 });
 
 module.exports = app;

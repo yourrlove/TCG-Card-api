@@ -1,6 +1,5 @@
 "use strict";
 const bcrypt = require("bcrypt");
-const { generateUUID } = require("../helpers/index");
 const db = require("../models/index");
 const {
   ConflictRequestError,
@@ -10,15 +9,13 @@ const {
 } = require("../core/error.response");
 const { createKeyTokenPair } = require("../utils/authUtils");
 const JWT = require("jsonwebtoken");
-const UserService = require("../services/user.service");
+const UserService = require("./user.service");
 
 class AuthService {
   static signUp = async ({
-    first_name,
-    last_name,
+    username,
     email,
     password,
-    phone_number,
   }) => {
     // setp1: check if email is already registered
     const isEmailExists = await db.User.findOne(
@@ -45,16 +42,11 @@ class AuthService {
     );
     if (!tokens) throw new ConflictRequestError("Failed to create tokens!");
     const newUser = await UserService.create({
-      user_id,
-      first_name,
-      last_name,
-      phone_number,
+      username,
       email,
       hash_password: passwordHash,
-      role_id,
       refresh_token: tokens.refreshToken,
     });
-    const cart = await CartService.create(newUser.user_id)  
     return tokens;
   };
 
@@ -65,7 +57,7 @@ class AuthService {
     if (!isPassMatch) throw new AuthFailureError("Wrong password!");
 
     const token = createKeyTokenPair(
-      { user_id: user.user_id, role_id: user.role_id },
+      { user_id: user.id },
       process.env.ACCESS_TOKEN_KEY_SECRET,
       process.env.REFRESH_TOKEN_KEY_SECRET
     );
@@ -119,7 +111,7 @@ class AuthService {
     );
 
     const token = createKeyTokenPair(
-      { user_id: user.id, role_id: user.role_id },
+      { user_id: user.id },
       process.env.ACCESS_TOKEN_KEY_SECRET,
       process.env.REFRESH_TOKEN_KEY_SECRET
     );
