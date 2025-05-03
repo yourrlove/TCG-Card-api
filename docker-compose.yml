@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysqldb
+    ports:
+      - 3306:${MYSQL_DB_PORT}
+    expose:
+      - 3306
+
+    
