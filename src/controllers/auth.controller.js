@@ -18,7 +18,9 @@ class AuthContoller {
         // });
         new CREATED({
             message: 'User created successfully',
-            metadata: accessToken
+            metadata: {
+                "accessToken": accessToken,
+            }
         }).send(res);
     }
 

@@ -1,5 +1,5 @@
 "use strict";
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const db = require("../models/index");
 const {
   ConflictRequestError,
@@ -26,34 +26,34 @@ class AuthService {
       throw new ConflictRequestError("Email already registered!");
 
     // step 2: has password
-    const passwordHash = await bcrypt.hash(password, 10);
-    const role_id  = await db.Role.findOne({
-      where: { name: 'user' },
-      attributes: ["role_id"],
-      raw: true,
-    });
-    if (!role_id) throw new BadRequestError("Role not found");
-    const user_id = generateUUID();
-    // step3: create token pair
-    const tokens = createKeyTokenPair(
-      { user_id: user_id, role_id },
-      process.env.ACCESS_TOKEN_KEY_SECRET,
-      process.env.REFRESH_TOKEN_KEY_SECRET
-    );
-    if (!tokens) throw new ConflictRequestError("Failed to create tokens!");
+    const passwordHash = await bcryptjs.hash(password, 10);
+
     const newUser = await UserService.create({
       username,
       email,
-      hash_password: passwordHash,
-      refresh_token: tokens.refreshToken,
+      hash_password: passwordHash
     });
+
+    // step3: create token pair
+    const tokens = createKeyTokenPair(
+      { user_id: newUser.id },
+      process.env.ACCESS_TOKEN_KEY_SECRET,
+      process.env.REFRESH_TOKEN_KEY_SECRET
+    );
+
+    if (!tokens) throw new ConflictRequestError("Failed to create tokens!");
+
+    // step4: update refresh token to db
+    newUser.refresh_token = tokens.refreshToken;
+    await newUser.save();
+
     return tokens;
   };
 
   static logIn = async ({ email, password }) => {
     const user = await db.User.findOne({ where: { email: email } });
     if (!user) throw new AuthFailureError("Wrong email!");
-    const isPassMatch = await bcrypt.compare(password, user.hash_password);
+    const isPassMatch = await bcryptjs.compare(password, user.hash_password);
     if (!isPassMatch) throw new AuthFailureError("Wrong password!");
 
     const token = createKeyTokenPair(
