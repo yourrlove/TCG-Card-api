@@ -8,16 +8,14 @@ class CardService {
         description,
         image_url,
         type,
-        rarity,
-        image_vector,
+        rarity
      }) => {
         const card = await db.Card.create({ 
             name,
             description,
             image_url,
             type,
-            rarity,
-            image_vector
+            rarity
         });
         if(!card) {
             throw new BadRequestError('Failed to create card! Something went wrong! Please try again!');
@@ -60,12 +58,11 @@ class CardService {
         return card;
     }
 
-    static getCardDetails = async (id, fields=[]) => {
+    static getCardDetails = async (id) => {
         const card = await db.Card.findOne({
             where: {
                 id: id
             },
-            attributes: fields,
             raw: true
         });
         if (!card) throw new BadRequestError('Card not found');
