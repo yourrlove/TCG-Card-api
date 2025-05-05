@@ -1,7 +1,6 @@
 'use strict';
 const db = require('../models');
 const { BadRequestError } = require('../core/error.response');
-const user = require('../models/user');
 
 class UserService {
     static create = async ({ username, email, hash_password }) => {

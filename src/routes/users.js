@@ -1,9 +1,10 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/user.controller');
+const { verifyToken } = require('../middlewares/auth');
+const { asyncHandler } = require('../helpers/index');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/', asyncHandler(userController.get_list_users));
+router.get('/me', verifyToken, asyncHandler(userController.get_current_user));
 
 module.exports = router;
