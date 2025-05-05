@@ -3,8 +3,10 @@ const router = express.Router();
 const api = express();
 
 const authRouter = require("./auth");
+const userRouter = require("./users");
 
 api.use("/auth", authRouter);
+api.use("/users", userRouter);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
