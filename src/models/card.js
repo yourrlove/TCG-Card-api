@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class Card extends Model {
     static associate(models) {
       // define association here
+
     }
   }
   Card.init({
@@ -37,8 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Card',
     tableName: 'cards',
-    timestamps: true,
-    paranoid: true
+    timestamps: true
   });
   return Card;
 };
