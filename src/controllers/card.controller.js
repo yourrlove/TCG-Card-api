@@ -18,6 +18,13 @@ class CardController {
         }).send(res);
     }
 
+    get_card = async (req, res, next) => {
+        new OK({
+            message: 'Card retrieved successfully',
+            metadata: await CardService.getCardDetails(req.params.id)
+        }).send(res);
+    }
+
     update_card = async (req, res, next) => {
         new OK({
             message: 'Card updated successfully',
