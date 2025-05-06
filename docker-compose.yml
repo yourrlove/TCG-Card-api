@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   mysqldb:
-    image: mysql
+    image: mysql:8.0
+    container_name: tcg-db
+    command: --default-authentication-plugin=mysql_native_password
     restart: always
     env_file:
       - .env
@@ -11,11 +11,38 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysqldb
     ports:
-      - 3306:${MYSQL_DB_PORT}
+      - "3306:3306"
     expose:
       - 3306
+    volumes:
+      - tcg-db:/var/lib/mysql
+    networks:
+      - tcg-networks
 
+  api:
+    container_name: tcg-api
+    depends_on:
+      - mysqldb
+    image: nhatanh2708/tcg-backend:latest
+    restart: always
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    env_file:
+      - .env
+    environment:
+      MYSQL_DB_HOST: mysqldb
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - tcg-networks
+
+volumes:
+  tcg-db:
+    driver: local
     
+networks:
+  tcg-networks:
+    driver: bridge
