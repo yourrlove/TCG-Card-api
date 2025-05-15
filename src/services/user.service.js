@@ -41,12 +41,12 @@ class UserService {
         return user;
     }
 
-    static getUserDetails = async (user_id, fields=[]) => {
+    static getUserDetails = async (user_id) => {
         const user = await db.User.findOne({
             where: {
                 id: user_id
             },
-            attributes: fields,
+            attributes: ['id', 'username', 'email'],
             raw: true
         });
         if (!user) throw new BadRequestError('User not found');
