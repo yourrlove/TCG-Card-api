@@ -1,22 +1,30 @@
 'use strict';
 const db = require('../models');
 const { BadRequestError } = require('../core/error.response');
+const cloudinary = require('../configs/config.cloudinary');
+
 
 class CardService {
     static create = async ({ 
         name,
-        description,
-        image_url,
+        code,
         type,
         rarity
-     }) => {
+     }, image) => {
+        // Upload image to Cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(image, {
+            folder: 'cards',
+            public_id: name
+        });
+
         const card = await db.Card.create({ 
             name,
-            description,
-            image_url,
+            code,
+            image_url : uploadResponse.secure_url,
             type,
             rarity
         });
+
         if(!card) {
             throw new BadRequestError('Failed to create card! Something went wrong! Please try again!');
         }

@@ -24,12 +24,16 @@ services:
     container_name: tcg-api
     depends_on:
       - mysqldb
-    image: nhatanh2708/tcg-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     env_file:
       - .env
+    volumes:
+      - ./src/uploads:/tcg-api/src/uploads
     environment:
       MYSQL_DB_HOST: mysqldb
       MYSQL_DATABASE: ${DB_NAME}

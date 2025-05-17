@@ -6,7 +6,10 @@ module.exports = (sequelize, DataTypes) => {
   class Card extends Model {
     static associate(models) {
       // define association here
-
+      Card.hasMany(models.Collection, {
+        foreignKey: 'card_id',
+        as: 'collections'
+      });
     }
   }
   Card.init({
@@ -14,15 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    image_url: {
+    code: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    type: {
+    image_url: {
       type: DataTypes.STRING,
       allowNull: true
     },
