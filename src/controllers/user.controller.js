@@ -28,7 +28,7 @@ class UserController {
     get_current_user = async (req, res, next) => {
         new OK({
             message: 'User retrieved successfully',
-            metadata: await UserService.get_basic_infor(req.user.user_id)
+            metadata: await UserService.getUserDetails(req.user.user_id)
         }).send(res);
     }
 }

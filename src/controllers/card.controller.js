@@ -2,12 +2,17 @@
 
 const { OK, CREATED } = require('../core/success.response');
 const CardService = require('../services/card.service');
+const { BadRequestError } = require('../core/error.response');
 
 class CardController {
     create_card = async (req, res, next) => {
+        const image = req.file.path;
+        if (!image) {
+            throw new BadRequestError('Image is required!');
+        }
         new CREATED({
             message: 'Card created successfully',
-            metadata: await CardService.create(req.body)
+            metadata: await CardService.create(req.body, image)
         }).send(res);
     }
 
