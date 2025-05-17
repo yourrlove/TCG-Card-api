@@ -32,6 +32,8 @@ services:
       - ${SERVER_PORT}:${SERVER_PORT}
     env_file:
       - .env
+    volumes:
+      - ./src/uploads:/tcg-api/src/uploads
     environment:
       MYSQL_DB_HOST: mysqldb
       MYSQL_DATABASE: ${DB_NAME}

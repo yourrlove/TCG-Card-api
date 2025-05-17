@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
         as: 'user'
     });
-    Collection.hasMany(models.Card, {
+    Collection.belongsTo(models.Card, {
         foreignKey: 'card_id',
-        as: 'cards'
+        as: 'card'
     });
     }
   }

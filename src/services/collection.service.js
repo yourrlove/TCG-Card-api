@@ -22,7 +22,8 @@ class CollectionService {
         // If it doesn't exist, create a new collection
         const collection = await db.Collection.create({ 
             user_id,
-            card_id
+            card_id,
+            quantity: 1
         });
         if(!collection) {
             throw new BadRequestError('Failed to create collection! Something went wrong! Please try again!');
@@ -38,7 +39,11 @@ class CollectionService {
     static get_user_collection = async (user_id) => {
         const collections = await db.Collection.findAll({ 
             where: { user_id },
-            raw: true
+            include: {
+                    model: db.Card,
+                    as: 'card',
+                    attributes: ['id', 'name', 'image_url', 'code', 'rarity'],
+            },
         });
         return collections;
     }
