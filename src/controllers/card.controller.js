@@ -19,7 +19,7 @@ class CardController {
     get_list_cards = async (req, res, next) => {
         new OK({
             message: 'Cards retrieved successfully',
-            metadata: await CardService.get_all()
+            metadata: await CardService.get_all(req.query)
         }).send(res);
     }
 

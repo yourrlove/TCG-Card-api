@@ -31,8 +31,24 @@ class CardService {
         return card;
     }
 
-    static get_all = async () => {
-        const users = await db.Card.findAll({ raw: true });
+    static get_all = async (filters) => {
+        const {
+            keyword,
+            rarity,
+        } = filters;
+        const where = {};
+        if (keyword) {
+            where[db.Sequelize.Op.or] = [
+            { name: { [db.Sequelize.Op.like]: `%${keyword}%` } },
+            { code: { [db.Sequelize.Op.like]: `%${keyword}%` } }
+            ];
+        }
+        if (rarity) {
+            where.rarity = {
+                [db.Sequelize.Op.like]: `%${rarity}%`
+            };
+        }
+        const users = await db.Card.findAll({ where, raw: true });
         return users;
     }
 
