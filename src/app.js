@@ -5,7 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./configs/config.swagger');
 
 // Routers
 const indexRouter = require('./routes/index');
@@ -22,6 +23,8 @@ const app = express();
 
 // Cross Origin Resource Sharing
 // app.use(cors(corsOptions));
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -43,7 +46,9 @@ sequelize
 
 
 
-app.use('/v1', indexRouter);
+// Swagger
+app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/v1/api', indexRouter);
 
 /* GET home page. */
 app.get('/', function(req, res, next) {
