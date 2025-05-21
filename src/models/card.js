@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    series: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     image_vector: {
       type: DataTypes.STRING,
       allowNull: true

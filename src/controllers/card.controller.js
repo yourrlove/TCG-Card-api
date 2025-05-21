@@ -43,6 +43,13 @@ class CardController {
             metadata: await CardService.delete(req.params.id)
         }).send(res);
     }
+    get_radom_card_by_series = async (req, res, next) => {
+        console.log(req.query);
+        new OK({
+            message: 'Card retrieved successfully',
+            metadata: await CardService.getRandomCardsBySeries(req.query.series)
+        }).send(res);
+    }
 }
 
 module.exports = new CardController();

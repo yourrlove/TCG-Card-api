@@ -109,6 +109,51 @@ router.post('/', uploadDisk.single("image"), asyncHandler(cardController.create_
  */
 router.get('/', asyncHandler(cardController.get_list_cards));
 
+
+/**
+ * @swagger
+ * /v1/api/cards/random:
+ *  get:
+ *    summary: Get a random card by series
+ *   tags:
+ *     - Cards
+ *   parameters:
+ *   - in: query
+ *   name: series
+ *  required: true
+ *  schema:
+ *    type: string
+ *   description: Series of the card
+ *  responses:
+ *    200:
+ *     description: Random card retrieved successfully
+ *    content:
+ *      application/json:
+ *        schema:
+ *         type: object
+ *        properties:
+ *         id:
+ *          type: string
+ *         example: "abc123"
+ *        name:
+ *         type: string
+ *        example: "Dark Magician"
+ *        code:
+ *         type: string
+ *        example: "DMG-001"
+ *       type:
+ *        type: string
+ *       example: "Monster"
+ *      rarity:
+ *       type: string
+ *      example: "Super Rare"
+ *      imageUrl:
+ *       type: string
+ *      example: "https://example.com/images/card.jpg"
+ */
+router.get('/random', asyncHandler(cardController.get_radom_card_by_series));
+
+
 /**
  * @swagger
  * /v1/api/cards/{id}:
